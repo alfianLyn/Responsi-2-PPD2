@@ -5,7 +5,9 @@
  */
 package projectresponsi;
 
-import java.util.*;
+import java.util.Scanner;
+import java.sql.*;
+import java.util.ArrayList;
 
 /**
  *
@@ -22,8 +24,30 @@ public class Sistem_Penjualan_Pulsa {
         this.no_hp = no;
         this.mail = em;
     }
+    
+    // Global property for databases
+    private static Connection connection;
+    private static Statement statement;
+    private static ResultSet result;
+
+    private static Connection open_connection() {
+        try {
+            String url = "jdbc:mysql://localhost/responsippd2";
+            String usr = "root";
+            String pass = "1";
+            Class.forName("com.mysql.jdbc.Driver");
+            connection = DriverManager.getConnection(url, usr, pass);
+
+        } catch (Exception e) {
+            System.err.println("koneksi gagal" + e.getMessage());
+        }
+        return connection;
+    }
 
     public static void main(String[] args) {
+        // Check Connection to Databases
+        open_connection();
+
         ArrayList<Sistem_Penjualan_Pulsa> data = new ArrayList<Sistem_Penjualan_Pulsa>();
         Scanner input = new Scanner(System.in);
 
