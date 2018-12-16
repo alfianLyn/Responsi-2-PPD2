@@ -163,9 +163,11 @@ public class Sistem_Penjualan_Pulsa {
                     case 2:
                         boolean validation = false;
                         ArrayList<Integer> checker = new ArrayList<>();
+                        ArrayList<Integer> tmp = new ArrayList<>();
                         sql = "SELECT id, nama, email, notlp, nominal, pembayaran FROM nota WHERE status='Hutang' order by id asc ";
                         rs = state.executeQuery(sql);
                         System.out.println(" " + "Nama" + "\t" + "Email" + "\t" + "No Telp" + "\t" + "Nominal");
+                        int no = 1;
                         while (rs.next()) {
                             int id = rs.getInt("id");
                             String nm = rs.getString("nama");
@@ -173,8 +175,10 @@ public class Sistem_Penjualan_Pulsa {
                             String tlp = rs.getString("notlp");
                             int val = rs.getInt("nominal");
                             int byr = rs.getInt("pembayaran");
-                            System.out.println(id + "." + nm + "\t" + em + "\t" + tlp + "\t" + val);
+                            System.out.println(no + "." + nm + "\t" + em + "\t" + tlp + "\t" + val);
+                            no++;
                             checker.add(id);
+                            tmp.add(val);
                         }
                         if (checker.size() < 1) {
                             System.out.println("Data Kosong, Silahkan isi data terlebih dahulu.");
@@ -186,6 +190,7 @@ public class Sistem_Penjualan_Pulsa {
                                 if (choose != checker.get(i)) {
                                     validation = true;
                                 }
+                                validation = false;
                             }
                             if (validation == true) {
                                 System.out.println("Data yang anda Pilih tidak valid...");
@@ -193,7 +198,13 @@ public class Sistem_Penjualan_Pulsa {
                             }
                             System.out.println("Masukkan Nominal Pembayaran");
                             bayar = input.nextInt();
-                            sql = "UPDATE nota SET pembayaran=" + bayar + ", status=\"Lunas\" WHERE id=" + choose;
+                            int tmpfs = tmp.get(choose - 1) * 1000;
+                            if (bayar >= tmpfs) {
+                                sql = "UPDATE nota SET pembayaran=" + bayar + ", status=\"Lunas\" WHERE id=" + checker.get(choose - 1);
+                                System.out.println("Kembalian anda: " + (bayar - tmpfs));
+                            } else {
+                                sql = "UPDATE nota SET pembayaran=" + bayar + ", status=\"Hutang\" WHERE id=" + checker.get(choose - 1);
+                            }
                             state.executeUpdate(sql);
                             System.out.println("Data berhasil diubah...");
                         }
